@@ -1,0 +1,12 @@
+{
+  "Author": "iv230",
+  "Name": "Pole Rotation",
+  "Punchline": "Snap yourself to the good position.",
+  "Description": "Tired of being offset while performing your neat animation? This plugin will help you find the right spot.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "penumbra",
+    "animation",
+    "utility"
+  ]
+}
