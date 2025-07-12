@@ -22,9 +22,8 @@ public sealed class PoleRotation : IDalamudPlugin
 
     [PluginService] internal static IPluginLog Log { get; private set; } = null!;
 
-    private const string CreateCommandName = "/pr";
-    private const string ReadCommandName = "/prr";
-    private const string UICommand = "/prw";
+    // private const string CreateCommandName = "/pr";
+    private const string UiCommand = "/prw";
 
     public Configuration Configuration { get; init; }
     
@@ -35,42 +34,41 @@ public sealed class PoleRotation : IDalamudPlugin
     public readonly WindowSystem WindowSystem = new("PoleRotation");
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
+    private CreateSnappingWindow CreateSnappingWindow { get; init; }
 
     public PoleRotation()
     {
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         SnappingService = new SnappingService(Configuration);
-        WorldOverlayService = new WorldOverlayService(SnappingService);
+        WorldOverlayService = new WorldOverlayService(this, SnappingService);
         WorldOverlayService.Initialize();
 
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
+        CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService);
 
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
+        WindowSystem.AddWindow(CreateSnappingWindow);
 
-        CommandManager.AddHandler(CreateCommandName, new CommandInfo(OnCreateCommand)
-        {
-            HelpMessage = "A useful message to display in /xlhelp"
-        });
-        CommandManager.AddHandler(ReadCommandName, new CommandInfo(OnReadCommand)
-        {
-            HelpMessage = "A useful message to display in /xlhelp"
-        });
-        CommandManager.AddHandler(UICommand, new CommandInfo(OnUICommand)
+        // CommandManager.AddHandler(CreateCommandName, new CommandInfo(OnCreateCommand)
+        // {
+        //     HelpMessage = "A useful message to display in /xlhelp"
+        // });
+        CommandManager.AddHandler(UiCommand, new CommandInfo(OnUICommand)
         {
             HelpMessage = "A useful message to display in /xlhelp"
         });
 
-        PluginInterface.UiBuilder.Draw += DrawUI;
+        PluginInterface.UiBuilder.Draw += DrawUi;
 
         // This adds a button to the plugin installer entry of this plugin which allows
         // to toggle the display status of the configuration ui
-        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUI;
+        PluginInterface.UiBuilder.OpenConfigUi += ToggleConfigUi;
 
         // Adds another button that is doing the same but for the main ui of the plugin
-        PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
+        PluginInterface.UiBuilder.OpenMainUi += ToggleMainUi;
 
         // Add a simple message to the log with level set to information
         // Use /xllog to open the log window in-game
@@ -86,36 +84,33 @@ public sealed class PoleRotation : IDalamudPlugin
         
         WorldOverlayService.Dispose();
 
-        CommandManager.RemoveHandler(CreateCommandName);
+        // CommandManager.RemoveHandler(CreateCommandName);
     }
 
-    private void OnCreateCommand(string command, string args)
-    {
-        Log.Debug("Calling create command");
+    // private void OnCreateCommand(string command, string args)
+    // {
+    //     Log.Debug("Calling create command");
+    //
+    //     if (args == string.Empty)
+    //     {
+    //         Log.Warning("Must provide a name as first argument");
+    //         return;
+    //     }
+    //     
+    //     SnappingService.NewSnapping(args);
+    // }
 
-        if (args == string.Empty)
-        {
-            Log.Warning("Must provide a name as first argument");
-            return;
-        }
-        
-        SnappingService.NewSnapping(args);
-    }
-    
-    private void OnReadCommand(string command, string args)
-    {
-        Log.Debug("Calling read command");
-        Log.Info(Configuration.Snappings.Count.ToString() ?? "Pas de config lol");
-    }
-    
     private void OnUICommand(string command, string args)
     {
         Log.Debug("Calling UICommand");
-        ToggleMainUI();
+        ToggleMainUi();
     }
 
-    private void DrawUI() => WindowSystem.Draw();
+    private void DrawUi() => WindowSystem.Draw();
 
-    public void ToggleConfigUI() => ConfigWindow.Toggle();
-    public void ToggleMainUI() => MainWindow.Toggle();
+    public void ToggleConfigUi() => ConfigWindow.Toggle();
+    public void ToggleMainUi() => MainWindow.Toggle();
+    public void ToggleCreateUi() => CreateSnappingWindow.Toggle();
+
+    public bool IsMainWindowOpen() => MainWindow.IsOpen;
 }

@@ -46,5 +46,11 @@ public class MainWindow : Window, IDisposable
         {
             ImGui.Text("No snappings available.");
         }
+        
+        ImGui.Separator();
+        if (ImGui.Button("Create"))
+        {
+            poleRotation.ToggleCreateUi();
+        }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Numerics;
-using PoleRotation.Model;
+﻿using PoleRotation.Model;
 
 namespace PoleRotation.Service;
 
@@ -13,33 +11,25 @@ public class SnappingService(Configuration configuration)
         Selected = snapping;
     }
 
-    public void NewSnapping(string? name)
-    {
-        var distance = GetSnappingDistance();
-        var snapping = new Snapping
-        {
-            Name = name,
-            Distance = distance
-        };
+    // public void NewSnapping(string? name)
+    // {
+    //     var distance = GetSnappingDistance();
+    //     var snapping = new Snapping
+    //     {
+    //         Name = name,
+    //         Distance = distance
+    //     };
+    //
+    //     PoleRotation.Log.Debug($"Computed new {snapping.Name} snapping at {snapping.Distance}");
+    //     SaveSnapping(snapping);
+    // }
 
-        PoleRotation.Log.Debug($"Computed new {snapping.Name} snapping at {snapping.Distance}");
-        SaveSnapping(snapping);
-    }
-
-    public static float GetSnappingDistance()
+    public static float GetSnappingDistance(uint housingItemId)
     {
         var playerPos = PlayerService.GetPlayerPosition();
-        var objectPos = HousingService.GetClosestItemPosition(197799u);
+        var objectPos = HousingService.GetClosestItemPosition(housingItemId);
 
         return (objectPos - playerPos).Length();
-    }
-
-    public float GetDelta()
-    {
-        var currentPlayerSnapping = GetSnappingDistance();
-        var targetSnapping = configuration.Snappings[^1]?.Distance ?? 0;
-        
-        return currentPlayerSnapping - targetSnapping;
     }
 
     public void SaveSnapping(Snapping? snapping)

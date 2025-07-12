@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
-using Dalamud.IoC;
-using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using ImGuiNET;
+using PoleRotation.Model;
 
 namespace PoleRotation.Service;
 
-public class WorldOverlayService(SnappingService snappingService)
+public class WorldOverlayService(PoleRotation poleRotation, SnappingService snappingService)
 {
     private const int PointCount = 360;
+    private const float PlacementPrecision = 0.005f;
 
     public void Initialize()
     {
@@ -23,31 +21,49 @@ public class WorldOverlayService(SnappingService snappingService)
         PoleRotation.PluginInterface.UiBuilder.Draw -= DrawOverlay;
     }
 
-    private unsafe void DrawOverlay()
+    private unsafe OverlayDrawContext? TryPrepareDrawContext()
     {
+        if (!poleRotation.IsMainWindowOpen())
+            return null;
+
         var snapping = snappingService.Selected;
-        if (snapping == null) return;
+        if (snapping == null)
+            return null;
 
         var player = PlayerService.GetCurrentPlayer();
-        if (player == null) return;
-        
-        var radius = snapping.Distance;
+        if (player == null)
+            return null;
+
         var center = HousingService.GetClosestItemPosition(197799u);
         center.Y = player->Position.Y;
 
-        var distance = Math.Abs(snapping.Distance - SnappingService.GetSnappingDistance());
-        var finePosition = distance < 0.005f;
+        var distance = Math.Abs(snapping.Distance - SnappingService.GetSnappingDistance(snapping.HousingItemId));;
+        var finePosition = distance < PlacementPrecision;
 
-        var yaw = player->Rotation; // en radians, tourne autour de l’axe Y
+        return new OverlayDrawContext
+        {
+            Radius = snapping.Distance,
+            Center = center,
+            Distance = distance,
+            FinePosition = finePosition,
+            Yaw = player->Rotation,
+            Player = player
+        };
+    }
+
+    private void DrawOverlay()
+    {
+        var context = TryPrepareDrawContext();
+        if (context == null) return;
 
         var drawList = ImGui.GetBackgroundDrawList();
-        
-        if (PoleRotation.GameGui.WorldToScreen(center, out var centerScreenPos))
+
+        if (PoleRotation.GameGui.WorldToScreen(context.Center, out var centerScreenPos))
         {
             drawList.AddText(
                 new Vector2(centerScreenPos.X + 6, centerScreenPos.Y - 6),
                 ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 1f)),
-                distance.ToString(CultureInfo.InvariantCulture)
+                context.Distance.ToString(CultureInfo.InvariantCulture)
             );
         }
 
@@ -55,27 +71,24 @@ public class WorldOverlayService(SnappingService snappingService)
         {
             var angle = MathF.Tau * i / PointCount;
 
-            // Point dans le repère joueur (avant rotation)
-            var offsetX = MathF.Cos(angle) * radius;
-            var offsetZ = MathF.Sin(angle) * radius;
+            var offsetX = MathF.Cos(angle) * context.Radius;
+            var offsetZ = MathF.Sin(angle) * context.Radius;
 
-            // Appliquer la rotation du joueur
-            var rotatedX = (offsetX * MathF.Cos(yaw)) - (offsetZ * MathF.Sin(yaw));
-            var rotatedZ = (offsetX * MathF.Sin(yaw)) + (offsetZ * MathF.Cos(yaw));
+            var rotatedX = (offsetX * MathF.Cos(context.Yaw)) - (offsetZ * MathF.Sin(context.Yaw));
+            var rotatedZ = (offsetX * MathF.Sin(context.Yaw)) + (offsetZ * MathF.Cos(context.Yaw));
 
-            // Position du point dans le monde
             var worldPoint = new Vector3(
-                center.X + rotatedX,
-                center.Y,
-                center.Z + rotatedZ
+                context.Center.X + rotatedX,
+                context.Center.Y,
+                context.Center.Z + rotatedZ
             );
 
-            // Convertir en coordonnées écran
             if (PoleRotation.GameGui.WorldToScreen(worldPoint, out var screenPos))
             {
-                var color = finePosition ? new Vector4(0f, 1f, 0f, 1f) : new Vector4(1f, 0f, 0f, 1f);
-                
-                // Dessiner le point à l’écran
+                var color = context.FinePosition
+                                ? new Vector4(0f, 1f, 0f, 1f)
+                                : new Vector4(1f, 0f, 0f, 1f);
+
                 drawList.AddCircleFilled(screenPos, 3f, ImGui.GetColorU32(color));
             }
         }
