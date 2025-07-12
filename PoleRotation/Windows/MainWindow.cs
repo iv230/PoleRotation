@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using Lumina.Excel.Sheets;
-using PoleRotation.Service;
 
 namespace PoleRotation.Windows;
 
@@ -34,23 +29,55 @@ public class MainWindow : Window, IDisposable
 
         if (poleRotation.Configuration.Snappings.Count > 0)
         {
-            var snappingNames = poleRotation.Configuration.Snappings.Select(s => s?.Name).ToArray();
-            var selectedIndex = poleRotation.Configuration.Snappings.IndexOf(poleRotation.SnappingService.Selected);
-
-            if (ImGui.ListBox("##SnappingList", ref selectedIndex, snappingNames, snappingNames.Length))
-            {
-                poleRotation.SnappingService.Select(poleRotation.Configuration.Snappings[selectedIndex]);
-            }
+            DrawSnappingsTable();
         }
         else
         {
             ImGui.Text("No snappings available.");
         }
-        
-        ImGui.Separator();
+
         if (ImGui.Button("Create"))
         {
             poleRotation.ToggleCreateUi();
+        }
+    }
+
+    private void DrawSnappingsTable()
+    {
+        var snappings = poleRotation.Configuration.Snappings;
+        var selected = poleRotation.SnappingService.Selected;
+
+        if (ImGui.BeginTable("SnappingTable", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(0, 200)))
+        {
+            ImGui.TableSetupColumn("Nom");
+            ImGui.TableSetupColumn("Mod");
+            ImGui.TableSetupColumn("Objet");
+            ImGui.TableSetupColumn("Distance");
+            ImGui.TableHeadersRow();
+
+            for (var i = 0; i < snappings.Count; i++)
+            {
+                var s = snappings[i];
+                if (s == null) continue;
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+
+                var label = $"##Selectable{i}";
+                var isSelected = (s == selected);
+
+                if (ImGui.Selectable(label, isSelected, ImGuiSelectableFlags.SpanAllColumns))
+                {
+                    poleRotation.SnappingService.Select(s);
+                }
+
+                ImGui.SameLine(); ImGui.Text(s.Name);
+                ImGui.TableSetColumnIndex(1); ImGui.Text(s.Mod);
+                ImGui.TableSetColumnIndex(2); ImGui.Text(s.HousingItemId.ToString());
+                ImGui.TableSetColumnIndex(3); ImGui.Text($"{s.Distance:F3}");
+            }
+
+            ImGui.EndTable();
         }
     }
 }

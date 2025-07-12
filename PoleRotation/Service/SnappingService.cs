@@ -2,27 +2,17 @@
 
 namespace PoleRotation.Service;
 
-public class SnappingService(Configuration configuration)
+public class SnappingService(Configuration.Configuration configuration)
 {
     public Snapping? Selected;
 
     public void Select(Snapping? snapping)
     {
+        PoleRotation.Log.Information($"Selected snapping {snapping?.Name}");
+        PoleRotation.Log.Verbose($"{snapping?.ToJson()}");
+
         Selected = snapping;
     }
-
-    // public void NewSnapping(string? name)
-    // {
-    //     var distance = GetSnappingDistance();
-    //     var snapping = new Snapping
-    //     {
-    //         Name = name,
-    //         Distance = distance
-    //     };
-    //
-    //     PoleRotation.Log.Debug($"Computed new {snapping.Name} snapping at {snapping.Distance}");
-    //     SaveSnapping(snapping);
-    // }
 
     public static float GetSnappingDistance(uint housingItemId)
     {
@@ -32,8 +22,11 @@ public class SnappingService(Configuration configuration)
         return (objectPos - playerPos).Length();
     }
 
-    public void SaveSnapping(Snapping? snapping)
+    public void SaveSnapping(Snapping snapping)
     {
+        PoleRotation.Log.Information($"Saving snapping {snapping?.Name}");
+        PoleRotation.Log.Verbose($"{snapping?.ToJson()}");
+
         configuration.Snappings.Add(snapping);
         configuration.Save();
     }

@@ -34,10 +34,10 @@ public class WorldOverlayService(PoleRotation poleRotation, SnappingService snap
         if (player == null)
             return null;
 
-        var center = HousingService.GetClosestItemPosition(197799u);
+        var center = HousingService.GetClosestItemPosition(snapping.HousingItemId);
         center.Y = player->Position.Y;
 
-        var distance = Math.Abs(snapping.Distance - SnappingService.GetSnappingDistance(snapping.HousingItemId));;
+        var distance = Math.Abs(snapping.Distance - SnappingService.GetSnappingDistance(snapping.HousingItemId));
         var finePosition = distance < PlacementPrecision;
 
         return new OverlayDrawContext

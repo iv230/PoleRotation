@@ -1,10 +1,9 @@
-﻿using Dalamud.Configuration;
-using Dalamud.Plugin;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Dalamud.Configuration;
 using PoleRotation.Model;
 
-namespace PoleRotation;
+namespace PoleRotation.Configuration;
 
 [Serializable]
 public class Configuration : IPluginConfiguration

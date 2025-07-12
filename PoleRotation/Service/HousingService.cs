@@ -3,9 +3,9 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 
 namespace PoleRotation.Service;
 
-public class HousingService
+public static class HousingService
 {
-    public static unsafe System.Numerics.Vector3 GetClosestItemPosition(uint itemBaseId) // 197799u
+    public static unsafe System.Numerics.Vector3 GetClosestItemPosition(uint itemBaseId)
     {
         var allFurniture = HousingManager.Instance()->IndoorTerritory->HousingObjectManager.Objects;
         var currentCharacter = PlayerService.GetCurrentPlayer();

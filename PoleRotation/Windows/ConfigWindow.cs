@@ -7,7 +7,7 @@ namespace PoleRotation.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {
-    private Configuration Configuration;
+    private Configuration.Configuration Configuration;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
