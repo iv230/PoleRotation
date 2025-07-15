@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Numerics;
 using ImGuiNET;
 using PoleRotation.Model;
@@ -58,12 +57,12 @@ public class WorldOverlayService(PoleRotation poleRotation, SnappingService snap
 
         var drawList = ImGui.GetBackgroundDrawList();
 
-        if (PoleRotation.GameGui.WorldToScreen(context.Center, out var centerScreenPos))
+        if (poleRotation.Configuration.DisplayDistance && PoleRotation.GameGui.WorldToScreen(context.Center, out var centerScreenPos))
         {
             drawList.AddText(
                 new Vector2(centerScreenPos.X + 6, centerScreenPos.Y - 6),
                 ImGui.GetColorU32(new Vector4(1f, 1f, 1f, 1f)),
-                context.Distance.ToString(CultureInfo.InvariantCulture)
+                $"{context.Distance:F3}"
             );
         }
 

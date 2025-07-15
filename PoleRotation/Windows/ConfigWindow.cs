@@ -5,27 +5,37 @@ using ImGuiNET;
 
 namespace PoleRotation.Windows;
 
-public class ConfigWindow : Window, IDisposable
+public class ConfigWindow(Configuration.Configuration configuration)
+    : Window("Pole Rotation config###With a constant ID"), IDisposable
 {
-    private Configuration.Configuration Configuration;
-
-    // We give this window a constant ID using ###
-    // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
-    // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(PoleRotation poleRotation) : base("A Wonderful Configuration Window###With a constant ID")
-    {
-
-    }
-
     public void Dispose() { }
-
-    public override void PreDraw()
-    {
-
-    }
 
     public override void Draw()
     {
-
+        var verticalIncrease = configuration.DisplayDistance;
+        if (ImGui.Checkbox("Display distance", ref verticalIncrease))
+        {
+            configuration.DisplayDistance = verticalIncrease;
+            configuration.Save();
+        }
+        DrawTooltip("(?)", "Whenever or not you want the distance to be displayed in the middle of the position circle");
+    }
+    
+    /// <summary>
+    /// Draws a tooltip element
+    /// </summary>
+    /// <param name="tooltip">The text that will show the tooltip if hovered</param>
+    /// <param name="text">The tooltip content</param>
+    private static void DrawTooltip(String tooltip, String text)
+    {
+        ImGui.SameLine();
+        ImGui.TextDisabled(tooltip);
+        if (ImGui.IsItemHovered())
+        { 
+            ImGui.SetNextWindowSize(new Vector2(300, 0), ImGuiCond.Always);
+            ImGui.BeginTooltip();
+            ImGui.TextWrapped(text);
+            ImGui.EndTooltip();
+        }
     }
 }

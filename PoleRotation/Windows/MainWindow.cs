@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
@@ -19,6 +20,33 @@ public class MainWindow : Window, IDisposable
         };
 
         this.poleRotation = poleRotation;
+
+        TitleBarButtons = [
+            new TitleBarButton()
+            {
+                Icon = FontAwesomeIcon.Cog,
+                Click = _ => poleRotation.ToggleConfigUi(),
+                IconOffset = new Vector2(2,1),
+                ShowTooltip = () =>
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text("Open settings");
+                    ImGui.EndTooltip();
+                }
+            },
+            new TitleBarButton()
+            {
+                Icon = FontAwesomeIcon.Plus,
+                Click = _ => poleRotation.ToggleCreateUi(),
+                IconOffset = new Vector2(2,1),
+                ShowTooltip = () =>
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text("Open creation window");
+                    ImGui.EndTooltip();
+                }
+            },
+        ];
     }
 
     public void Dispose() { }
