@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using System;
+using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
@@ -12,6 +13,7 @@ public sealed class PoleRotation : IDalamudPlugin
 {
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
+    [PluginService] internal static IDataManager DataManager { get; set; } = null!;
     [PluginService] internal static IClientState ClientState { get; private set; } = null!;
     [PluginService] internal static IGameGui GameGui { get; set; } = null!;
     [PluginService] internal static IPluginLog Log { get; private set; } = null!;
@@ -34,6 +36,10 @@ public sealed class PoleRotation : IDalamudPlugin
     public PoleRotation()
     {
         Log.Info($"===Starting {PluginInterface.Manifest.Name}===");
+        foreach (var sheet in DataManager.Excel.SheetNames)
+            if (sheet.Contains("housing", StringComparison.OrdinalIgnoreCase))
+                Log.Information($"Sheet: {sheet}");
+
         Configuration = PluginInterface.GetPluginConfig() as Configuration.Configuration ?? new Configuration.Configuration();
 
         // Services

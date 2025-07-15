@@ -1,5 +1,9 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
+using PoleRotation.Model;
+using HousingFurniture = Lumina.Excel.Sheets.HousingFurniture;
 
 namespace PoleRotation.Service;
 
@@ -29,5 +33,17 @@ public static class HousingService
         }
 
         return closestPosition;
+    }
+
+    public static List<FurnitureItem> GetAllHousingObjects()
+    {
+        var sheet = PoleRotation.DataManager.GetExcelSheet<HousingFurniture>()!
+            .Select(row => new FurnitureItem
+            {
+                Id = row.RowId,
+                Name = row.Item.Value!.Name.ToString()
+            })
+            .ToList();
+        return sheet.ToList();
     }
 }

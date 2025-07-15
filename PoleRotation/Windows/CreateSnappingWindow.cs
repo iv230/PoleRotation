@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Numerics;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using PoleRotation.Model;
 using PoleRotation.Model.Penumbra;
 using PoleRotation.Service;
+using PoleRotation.Windows.Components;
 
 namespace PoleRotation.Windows;
 
@@ -18,27 +14,26 @@ public class CreateSnappingWindow : Window, IDisposable
     // Dependencies
     private readonly PoleRotation poleRotation;
     private readonly SnappingService snappingService;
-    private readonly PenumbraService penumbraService;
 
-    // SNapping to create
+    // Snapping to create
     private string name = string.Empty;
     private string modName = string.Empty;
-    private string housingItemString = string.Empty;
-    private uint housingItemId = 197799u;
+    private uint housingItemId;
     private float distance;
 
-    // Mod selector
-    private List<PenumbraMod> availableMods = [];
-    private int selectedModIndex = -1;
-    private string modSearch = "";
+    private readonly ImGuiSearchableCombo<PenumbraMod> modCombo =
+        new(m => m.Name);
+
+    private readonly ImGuiSearchableCombo<FurnitureItem> housingCombo =
+        new(h => h.Name, h => h.Id);
 
     public CreateSnappingWindow(PoleRotation poleRotation, SnappingService snappingService, PenumbraService penumbraService) : base("Create a new Snapping")
     {
         this.poleRotation = poleRotation;
         this.snappingService = snappingService;
-        this.penumbraService = penumbraService;
-        
-        _ = Task.Run(async () => availableMods = await penumbraService.LoadPenumbraModsAsync());
+
+        _ = Task.Run(async () => modCombo.Items = await penumbraService.LoadPenumbraModsAsync());
+        _ = Task.Run(() => housingCombo.Items = HousingService.GetAllHousingObjects());
     }
 
     public void Dispose() { }
@@ -49,76 +44,47 @@ public class CreateSnappingWindow : Window, IDisposable
         ImGui.InputText("Name", ref name, 64);
 
         // Mod
-        DrawModSelector();
+        if (modCombo.Draw("Associated mod", out var selectedMod, out _))
+            modName = selectedMod?.BasePath ?? "";
 
         // Object
-        ImGui.InputText("Objet Housing", ref housingItemString, 64);
-        if (uint.TryParse(housingItemString, out var id))
-            housingItemId = id;
+        if (housingCombo.Draw("Associated object", out _, out var housingId))
+            housingItemId = housingId;
 
         // Distance (readonly)
         distance = SnappingService.GetSnappingDistance(housingItemId);
-        ImGui.Text($"Distance: {distance:F3}");
+        if (housingItemId != 0)
+            ImGui.Text($"Distance: {distance:F3}");
 
         // Validation
+        ImGui.BeginDisabled(!CanSave());
         if (ImGui.Button("Validate"))
-        {
-            var newSnapping = new Snapping
-            {
-                Name = name,
-                Mod = modName,
-                HousingItemId = housingItemId,
-                Distance = distance
-            };
-
-            snappingService.SaveSnapping(newSnapping);
-            poleRotation.ToggleCreateUi();
-        }
+            Save();
+        ImGui.EndDisabled();
     }
 
-    private void DrawModSelector()
+    private bool CanSave()
     {
-        if (availableMods.Count == 0)
+        return name != string.Empty &&
+               modName != string.Empty &&
+               housingItemId != 0;
+    }
+
+    private void Save()
+    {
+        var newSnapping = new Snapping
         {
-            ImGui.TextColored(new Vector4(1f, 0.6f, 0.2f, 1f), "No mod detected");
-            return;
-        }
+            Name = name,
+            Mod = modName,
+            HousingItemId = housingItemId,
+            Distance = distance
+        };
 
-        var previewValue = selectedModIndex >= 0 && selectedModIndex < availableMods.Count
-                               ? availableMods[selectedModIndex].Name
-                               : "Select a mod";
-
-        if (ImGui.BeginCombo("Associated mod", previewValue, ImGuiComboFlags.HeightLargest))
-        {
-            // Searchbar
-            ImGui.PushItemWidth(-1);
-            ImGui.InputText("##ModSearch", ref modSearch, 100);
-            ImGui.PopItemWidth();
-            ImGui.Separator();
-
-            // Mod list
-            ImGui.BeginChild("ModListChild", new Vector2(0, 200), false);
-
-            for (var i = 0; i < availableMods.Count; i++)
-            {
-                var selectedName = availableMods[i].Name;
-
-                if (!string.IsNullOrEmpty(modSearch) && !selectedName.Contains(modSearch, StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                var isSelected = (i == selectedModIndex);
-                if (ImGui.Selectable(selectedName, isSelected))
-                {
-                    selectedModIndex = i;
-                    modName = availableMods[i].BasePath;
-                }
-
-                if (isSelected)
-                    ImGui.SetItemDefaultFocus();
-            }
-
-            ImGui.EndChild();
-            ImGui.EndCombo();
-        }
+        snappingService.SaveSnapping(newSnapping);
+        
+        name = string.Empty;
+        modCombo.Clear();
+        housingCombo.Clear();
+        poleRotation.ToggleCreateUi();
     }
 }
