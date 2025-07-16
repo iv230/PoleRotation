@@ -24,8 +24,8 @@ public class SnappingService(Configuration.Configuration configuration)
 
     public void SaveSnapping(Snapping snapping)
     {
-        PoleRotation.Log.Information($"Saving snapping {snapping?.Name}");
-        PoleRotation.Log.Verbose($"{snapping?.ToJson()}");
+        PoleRotation.Log.Information($"Saving snapping {snapping.Name}");
+        PoleRotation.Log.Verbose($"{snapping.ToJson()}");
 
         configuration.Snappings.Add(snapping);
         configuration.Save();

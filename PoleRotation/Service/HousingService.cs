@@ -9,6 +9,8 @@ namespace PoleRotation.Service;
 
 public static class HousingService
 {
+    private static List<FurnitureItem>? Cache;
+
     public static unsafe System.Numerics.Vector3 GetClosestItemPosition(uint itemBaseId)
     {
         var allFurniture = HousingManager.Instance()->IndoorTerritory->HousingObjectManager.Objects;
@@ -37,6 +39,11 @@ public static class HousingService
 
     public static List<FurnitureItem> GetAllHousingObjects()
     {
+        return Cache ?? FetchAllHousingObjects();
+    }
+
+    private static List<FurnitureItem> FetchAllHousingObjects()
+    {
         var sheet = PoleRotation.DataManager.GetExcelSheet<HousingFurniture>()!
             .Select(row => new FurnitureItem
             {
@@ -44,6 +51,8 @@ public static class HousingService
                 Name = row.Item.Value!.Name.ToString()
             })
             .ToList();
-        return sheet.ToList();
+        var list = sheet.ToList();
+        Cache = list;
+        return list;
     }
 }

@@ -49,7 +49,10 @@ public class MainWindow : Window, IDisposable
         ];
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+    }
 
     public override void Draw()
     {

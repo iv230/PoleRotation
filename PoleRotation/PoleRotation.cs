@@ -51,7 +51,7 @@ public sealed class PoleRotation : IDalamudPlugin
         // Windows
         ConfigWindow = new ConfigWindow(Configuration);
         MainWindow = new MainWindow(this);
-        CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService, PenumbraService);
+        CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService);
         
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);

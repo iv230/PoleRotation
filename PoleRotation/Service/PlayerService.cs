@@ -11,13 +11,8 @@ public static unsafe class PlayerService
         return currentCharacter;
     }
 
-    public static System.Numerics.Vector3 GetPlayerPosition()
+    public static Vector3 GetPlayerPosition()
     {
         return GetCurrentPlayer()->Position;
-    }
-    
-    public static float GetPlayerRotation()
-    {
-        return GetCurrentPlayer()->Rotation;
     }
 }

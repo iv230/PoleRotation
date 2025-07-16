@@ -1,10 +1,11 @@
-﻿using System.Numerics;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace PoleRotation.Model;
 
 public class Snapping
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new() { WriteIndented = true };
+
     public required string Name { get; init; }
     public required float Distance { get; init; }
     public required string Mod { get; init; }
@@ -12,6 +13,6 @@ public class Snapping
 
     public string ToJson()
     {
-        return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
+        return JsonSerializer.Serialize(this, JsonSerializerOptions);
     }
 }

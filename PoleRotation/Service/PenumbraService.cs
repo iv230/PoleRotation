@@ -12,7 +12,7 @@ public sealed class PenumbraService
 {
     private static readonly HttpClient Client = new();
 
-    public async Task<List<PenumbraMod>> LoadPenumbraModsAsync()
+    public static async Task<List<PenumbraMod>?> LoadPenumbraModsAsync()
     {
         PoleRotation.Log.Info("Fetching Penumbra mods...");
 
