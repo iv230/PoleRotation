@@ -1,4 +1,4 @@
-﻿namespace PoleRotation.Model.Penumbra;
+﻿namespace PolePosition.Model.Penumbra;
 
 public sealed class PenumbraMod
 {

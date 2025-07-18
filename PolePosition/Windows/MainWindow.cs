@@ -4,15 +4,15 @@ using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using PoleRotation.Service;
+using PolePosition.Service;
 
-namespace PoleRotation.Windows;
+namespace PolePosition.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private readonly PoleRotation poleRotation;
+    private readonly PolePosition polePosition;
 
-    public MainWindow(PoleRotation poleRotation)
+    public MainWindow(PolePosition polePosition)
         : base("Pole Animation##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
@@ -21,13 +21,13 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        this.poleRotation = poleRotation;
+        this.polePosition = polePosition;
 
         TitleBarButtons = [
             new TitleBarButton()
             {
                 Icon = FontAwesomeIcon.Cog,
-                Click = _ => poleRotation.ToggleConfigUi(),
+                Click = _ => polePosition.ToggleConfigUi(),
                 IconOffset = new Vector2(2,1),
                 ShowTooltip = () =>
                 {
@@ -39,7 +39,7 @@ public class MainWindow : Window, IDisposable
             new TitleBarButton()
             {
                 Icon = FontAwesomeIcon.Plus,
-                Click = _ => poleRotation.ToggleCreateUi(),
+                Click = _ => polePosition.ToggleCreateUi(),
                 IconOffset = new Vector2(2,1),
                 ShowTooltip = () =>
                 {
@@ -74,7 +74,7 @@ public class MainWindow : Window, IDisposable
     {
         ImGui.Text("Select a Snapping:");
 
-        if (poleRotation.Configuration.Snappings.Count > 0)
+        if (polePosition.Configuration.Snappings.Count > 0)
         {
             DrawSnappingsTable();
         }
@@ -85,14 +85,14 @@ public class MainWindow : Window, IDisposable
 
         if (ImGui.Button("Create"))
         {
-            poleRotation.ToggleCreateUi();
+            polePosition.ToggleCreateUi();
         }
     }
 
     private void DrawSnappingsTable()
     {
-        var snappings = poleRotation.Configuration.Snappings;
-        var selected = poleRotation.SnappingService.Selected;
+        var snappings = polePosition.Configuration.Snappings;
+        var selected = polePosition.SnappingService.Selected;
 
         if (ImGui.BeginTable("SnappingTable", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(0, 200)))
         {
@@ -115,7 +115,7 @@ public class MainWindow : Window, IDisposable
 
                 if (ImGui.Selectable(label, isSelected, ImGuiSelectableFlags.SpanAllColumns))
                 {
-                    poleRotation.SnappingService.Select(s);
+                    polePosition.SnappingService.Select(s);
                 }
 
                 ImGui.SameLine(); ImGui.Text(s.Name);

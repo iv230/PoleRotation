@@ -2,17 +2,17 @@
 using System.Threading.Tasks;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using PoleRotation.Model;
-using PoleRotation.Model.Penumbra;
-using PoleRotation.Service;
-using PoleRotation.Windows.Components;
+using PolePosition.Model;
+using PolePosition.Model.Penumbra;
+using PolePosition.Service;
+using PolePosition.Windows.Components;
 
-namespace PoleRotation.Windows;
+namespace PolePosition.Windows;
 
 public class CreateSnappingWindow : Window, IDisposable
 {
     // Dependencies
-    private readonly PoleRotation poleRotation;
+    private readonly PolePosition polePosition;
     private readonly SnappingService snappingService;
 
     // Snapping to create
@@ -27,9 +27,9 @@ public class CreateSnappingWindow : Window, IDisposable
     private readonly ImGuiSearchableCombo<FurnitureItem> housingCombo =
         new(h => h.Name, h => h.Id);
 
-    public CreateSnappingWindow(PoleRotation poleRotation, SnappingService snappingService) : base("Create a new Snapping")
+    public CreateSnappingWindow(PolePosition polePosition, SnappingService snappingService) : base("Create a new Snapping")
     {
-        this.poleRotation = poleRotation;
+        this.polePosition = polePosition;
         this.snappingService = snappingService;
 
         _ = Task.Run(async () => modCombo.Items = await PenumbraService.LoadPenumbraModsAsync() ?? []);
@@ -88,6 +88,6 @@ public class CreateSnappingWindow : Window, IDisposable
         name = string.Empty;
         modCombo.Clear();
         housingCombo.Clear();
-        poleRotation.ToggleCreateUi();
+        polePosition.ToggleCreateUi();
     }
 }

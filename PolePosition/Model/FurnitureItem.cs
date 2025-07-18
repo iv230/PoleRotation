@@ -1,4 +1,4 @@
-﻿namespace PoleRotation.Model;
+﻿namespace PolePosition.Model;
 
 public class FurnitureItem
 {

@@ -1,13 +1,13 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-namespace PoleRotation.Service;
+namespace PolePosition.Service;
 
 public static unsafe class PlayerService
 {
     public static BattleChara* GetCurrentPlayer()
     {
-        var currentCharacter = (BattleChara*)(PoleRotation.ClientState.LocalPlayer?.Address ?? 0);
+        var currentCharacter = (BattleChara*)(PolePosition.ClientState.LocalPlayer?.Address ?? 0);
         return currentCharacter;
     }
 

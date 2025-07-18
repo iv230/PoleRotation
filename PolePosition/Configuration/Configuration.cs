@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dalamud.Configuration;
-using PoleRotation.Model;
+using PolePosition.Model;
 
-namespace PoleRotation.Configuration;
+namespace PolePosition.Configuration;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
@@ -15,7 +15,7 @@ public class Configuration : IPluginConfiguration
 
     public void Save()
     {
-        PoleRotation.PluginInterface.SavePluginConfig(this);
-        PoleRotation.Log.Information("Configuration saved.");
+        PolePosition.PluginInterface.SavePluginConfig(this);
+        PolePosition.Log.Information("Configuration saved.");
     }
 }

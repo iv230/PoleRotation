@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using ImGuiNET;
 
-namespace PoleRotation.Windows.Components;
+namespace PolePosition.Windows.Components;
 
 public class ImGuiSearchableCombo<T>(Func<T, string> getDisplayName, Func<T, uint>? getId = null, float height = 200f)
 {

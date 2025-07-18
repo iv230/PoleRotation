@@ -4,12 +4,12 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using PoleRotation.Service;
-using PoleRotation.Windows;
+using PolePosition.Service;
+using PolePosition.Windows;
 
-namespace PoleRotation;
+namespace PolePosition;
 
-public sealed class PoleRotation : IDalamudPlugin
+public sealed class PolePosition : IDalamudPlugin
 {
     [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
     [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
@@ -22,7 +22,7 @@ public sealed class PoleRotation : IDalamudPlugin
     private const string UiCommandShorten = "/pp";
     private const string ConfigCommand = "/ppc";
 
-    public readonly WindowSystem WindowSystem = new("PoleRotation");
+    public readonly WindowSystem WindowSystem = new("PolePosition");
 
     public Configuration.Configuration Configuration { get; init; }
     public SnappingService SnappingService { get; init; }
@@ -33,7 +33,7 @@ public sealed class PoleRotation : IDalamudPlugin
     private MainWindow MainWindow { get; init; }
     private CreateSnappingWindow CreateSnappingWindow { get; init; }
 
-    public PoleRotation()
+    public PolePosition()
     {
         Log.Info($"===Starting {PluginInterface.Manifest.Name}===");
         foreach (var sheet in DataManager.Excel.SheetNames)

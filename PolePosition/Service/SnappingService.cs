@@ -1,6 +1,6 @@
-﻿using PoleRotation.Model;
+﻿using PolePosition.Model;
 
-namespace PoleRotation.Service;
+namespace PolePosition.Service;
 
 public class SnappingService(Configuration.Configuration configuration)
 {
@@ -8,8 +8,8 @@ public class SnappingService(Configuration.Configuration configuration)
 
     public void Select(Snapping? snapping)
     {
-        PoleRotation.Log.Information($"Selected snapping {snapping?.Name}");
-        PoleRotation.Log.Verbose($"{snapping?.ToJson()}");
+        PolePosition.Log.Information($"Selected snapping {snapping?.Name}");
+        PolePosition.Log.Verbose($"{snapping?.ToJson()}");
 
         Selected = snapping;
     }
@@ -24,8 +24,8 @@ public class SnappingService(Configuration.Configuration configuration)
 
     public void SaveSnapping(Snapping snapping)
     {
-        PoleRotation.Log.Information($"Saving snapping {snapping.Name}");
-        PoleRotation.Log.Verbose($"{snapping.ToJson()}");
+        PolePosition.Log.Information($"Saving snapping {snapping.Name}");
+        PolePosition.Log.Verbose($"{snapping.ToJson()}");
 
         configuration.Snappings.Add(snapping);
         configuration.Save();

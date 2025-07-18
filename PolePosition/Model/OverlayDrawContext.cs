@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.Game.Character;
 
-namespace PoleRotation.Model;
+namespace PolePosition.Model;
 
 internal sealed unsafe class OverlayDrawContext
 {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using PoleRotation.Model.Penumbra;
+using PolePosition.Model.Penumbra;
 
-namespace PoleRotation.Service;
+namespace PolePosition.Service;
 
 public sealed class PenumbraService
 {
@@ -14,7 +14,7 @@ public sealed class PenumbraService
 
     public static async Task<List<PenumbraMod>?> LoadPenumbraModsAsync()
     {
-        PoleRotation.Log.Info("Fetching Penumbra mods...");
+        PolePosition.Log.Info("Fetching Penumbra mods...");
 
         try
         {
@@ -22,7 +22,7 @@ public sealed class PenumbraService
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-            PoleRotation.Log.Debug(json);
+            PolePosition.Log.Debug(json);
 
             var modsDict = JsonSerializer.Deserialize<Dictionary<string, string>>(json) ?? new Dictionary<string, string>();
 
@@ -36,7 +36,7 @@ public sealed class PenumbraService
         }
         catch (Exception ex)
         {
-            PoleRotation.Log.Error($"Error while fetching Penumbra mod list: {ex}");
+            PolePosition.Log.Error($"Error while fetching Penumbra mod list: {ex}");
             return [];
         }
     }

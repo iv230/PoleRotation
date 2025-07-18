@@ -2,10 +2,10 @@
 using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Common.Math;
-using PoleRotation.Model;
+using PolePosition.Model;
 using HousingFurniture = Lumina.Excel.Sheets.HousingFurniture;
 
-namespace PoleRotation.Service;
+namespace PolePosition.Service;
 
 public static class HousingService
 {
@@ -55,7 +55,7 @@ public static class HousingService
 
     private static List<FurnitureItem> FetchAllHousingObjects()
     {
-        var sheet = PoleRotation.DataManager.GetExcelSheet<HousingFurniture>()!
+        var sheet = PolePosition.DataManager.GetExcelSheet<HousingFurniture>()!
             .Select(row => new FurnitureItem
             {
                 Id = row.RowId,

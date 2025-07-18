@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace PoleRotation.Model;
+namespace PolePosition.Model;
 
 public class Snapping
 {

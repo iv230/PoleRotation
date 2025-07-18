@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Numerics;
 using ImGuiNET;
-using PoleRotation.Model;
+using PolePosition.Model;
 
-namespace PoleRotation.Service;
+namespace PolePosition.Service;
 
-public class WorldOverlayService(PoleRotation poleRotation, SnappingService snappingService)
+public class WorldOverlayService(PolePosition polePosition, SnappingService snappingService)
 {
     private const int PointCount = 360;
     private const float PlacementPrecision = 0.005f;
 
     public void Initialize()
     {
-        PoleRotation.PluginInterface.UiBuilder.Draw += DrawOverlay;
+        PolePosition.PluginInterface.UiBuilder.Draw += DrawOverlay;
     }
 
     public void Dispose()
     {
-        PoleRotation.PluginInterface.UiBuilder.Draw -= DrawOverlay;
+        PolePosition.PluginInterface.UiBuilder.Draw -= DrawOverlay;
     }
 
     private unsafe OverlayDrawContext? TryPrepareDrawContext()
     {
-        if (!poleRotation.IsMainWindowOpen())
+        if (!polePosition.IsMainWindowOpen())
             return null;
 
         var snapping = snappingService.Selected;
@@ -57,7 +57,7 @@ public class WorldOverlayService(PoleRotation poleRotation, SnappingService snap
 
         var drawList = ImGui.GetBackgroundDrawList();
 
-        if (poleRotation.Configuration.DisplayDistance && PoleRotation.GameGui.WorldToScreen(context.Center, out var centerScreenPos))
+        if (polePosition.Configuration.DisplayDistance && PolePosition.GameGui.WorldToScreen(context.Center, out var centerScreenPos))
         {
             drawList.AddText(
                 new Vector2(centerScreenPos.X + 6, centerScreenPos.Y - 6),
@@ -82,7 +82,7 @@ public class WorldOverlayService(PoleRotation poleRotation, SnappingService snap
                 context.Center.Z + rotatedZ
             );
 
-            if (PoleRotation.GameGui.WorldToScreen(worldPoint, out var screenPos))
+            if (PolePosition.GameGui.WorldToScreen(worldPoint, out var screenPos))
             {
                 var color = context.FinePosition
                                 ? new Vector4(0f, 1f, 0f, 1f)

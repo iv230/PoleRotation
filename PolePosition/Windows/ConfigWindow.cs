@@ -3,10 +3,10 @@ using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
-namespace PoleRotation.Windows;
+namespace PolePosition.Windows;
 
 public class ConfigWindow(Configuration.Configuration configuration)
-    : Window("Pole Rotation config###With a constant ID"), IDisposable
+    : Window("Pole Position config###With a constant ID"), IDisposable
 {
     public void Dispose() { }
 
