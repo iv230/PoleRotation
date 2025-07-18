@@ -37,6 +37,17 @@ public static class HousingService
         return closestPosition;
     }
 
+    public static string GetObjectName(uint itemBaseId)
+    {
+        if (Cache == null)
+            FetchAllHousingObjects();
+
+        return Cache!
+               .Where(obj => obj.Id == itemBaseId)
+               .Select(obj => obj.Name)
+               .FirstOrDefault() ?? "Unknown";
+    }
+
     public static List<FurnitureItem> GetAllHousingObjects()
     {
         return Cache ?? FetchAllHousingObjects();

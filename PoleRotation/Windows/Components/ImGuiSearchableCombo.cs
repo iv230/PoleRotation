@@ -7,7 +7,7 @@ namespace PoleRotation.Windows.Components;
 
 public class ImGuiSearchableCombo<T>(Func<T, string> getDisplayName, Func<T, uint>? getId = null, float height = 200f)
 {
-    public List<T>? Items = [];
+    public List<T> Items = [];
     public int SelectedIndex = -1;
     public string SearchText = "";
 

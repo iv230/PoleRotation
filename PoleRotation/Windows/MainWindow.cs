@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using PoleRotation.Service;
 
 namespace PoleRotation.Windows;
 
@@ -46,6 +48,20 @@ public class MainWindow : Window, IDisposable
                     ImGui.EndTooltip();
                 }
             },
+            new TitleBarButton()
+            {
+                Icon = FontAwesomeIcon.Heart,
+                Click = _ => {
+                    Process.Start(new ProcessStartInfo {FileName = "https://ko-fi.com/iriswhm", UseShellExecute = true});
+                },
+                IconOffset = new Vector2(2, 1),
+                ShowTooltip = () =>
+                {
+                    ImGui.BeginTooltip();
+                    ImGui.Text("Support Iris on Ko-fi :3");
+                    ImGui.EndTooltip();
+                }
+            },
         ];
     }
 
@@ -80,9 +96,9 @@ public class MainWindow : Window, IDisposable
 
         if (ImGui.BeginTable("SnappingTable", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(0, 200)))
         {
-            ImGui.TableSetupColumn("Nom");
+            ImGui.TableSetupColumn("Name");
             ImGui.TableSetupColumn("Mod");
-            ImGui.TableSetupColumn("Objet");
+            ImGui.TableSetupColumn("Object");
             ImGui.TableSetupColumn("Distance");
             ImGui.TableHeadersRow();
 
@@ -104,7 +120,7 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.SameLine(); ImGui.Text(s.Name);
                 ImGui.TableSetColumnIndex(1); ImGui.Text(s.Mod);
-                ImGui.TableSetColumnIndex(2); ImGui.Text(s.HousingItemId.ToString());
+                ImGui.TableSetColumnIndex(2); ImGui.Text(HousingService.GetObjectName(s.HousingItemId));
                 ImGui.TableSetColumnIndex(3); ImGui.Text($"{s.Distance:F3}");
             }
 
