@@ -2,7 +2,7 @@
 
 namespace PolePosition.Service;
 
-public class SnappingService(Configuration.Configuration configuration)
+public class SnappingService(Configuration configuration)
 {
     public Snapping? Selected;
 

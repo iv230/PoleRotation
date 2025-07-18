@@ -27,12 +27,12 @@ public class CreateSnappingWindow : Window, IDisposable
     private readonly ImGuiSearchableCombo<FurnitureItem> housingCombo =
         new(h => h.Name, h => h.Id);
 
-    public CreateSnappingWindow(PolePosition polePosition, SnappingService snappingService) : base("Create a new Snapping")
+    public CreateSnappingWindow(PolePosition polePosition, SnappingService snappingService, PenumbraService penumbraService) : base("Create a new Snapping")
     {
         this.polePosition = polePosition;
         this.snappingService = snappingService;
 
-        _ = Task.Run(async () => modCombo.Items = await PenumbraService.LoadPenumbraModsAsync() ?? []);
+        _ = Task.Run(async () => modCombo.Items = await penumbraService.LoadPenumbraModsAsync() ?? []);
         _ = Task.Run(() => housingCombo.Items = HousingService.GetAllHousingObjects());
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Dalamud.Configuration;
 using PolePosition.Model;
 
-namespace PolePosition.Configuration;
+namespace PolePosition;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
@@ -12,6 +12,7 @@ public class Configuration : IPluginConfiguration
 
     public List<Snapping?> Snappings { get; set; } = [];
     public bool DisplayDistance { get; set; }
+    public string PenumbraCollection { get; set; } = "Default";
 
     public void Save()
     {

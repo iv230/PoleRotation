@@ -24,7 +24,7 @@ public sealed class PolePosition : IDalamudPlugin
 
     public readonly WindowSystem WindowSystem = new("PolePosition");
 
-    public Configuration.Configuration Configuration { get; init; }
+    public Configuration Configuration { get; init; }
     public SnappingService SnappingService { get; init; }
     public WorldOverlayService WorldOverlayService { get; init; }
     public PenumbraService PenumbraService { get; init; }
@@ -40,19 +40,19 @@ public sealed class PolePosition : IDalamudPlugin
             if (sheet.Contains("housing", StringComparison.OrdinalIgnoreCase))
                 Log.Information($"Sheet: {sheet}");
 
-        Configuration = PluginInterface.GetPluginConfig() as Configuration.Configuration ?? new Configuration.Configuration();
+        Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         // Services
         SnappingService = new SnappingService(Configuration);
         WorldOverlayService = new WorldOverlayService(this, SnappingService);
-        PenumbraService = new PenumbraService();
+        PenumbraService = new PenumbraService(PluginInterface, Configuration);
         WorldOverlayService.Initialize();
 
         // Windows
-        ConfigWindow = new ConfigWindow(Configuration);
+        ConfigWindow = new ConfigWindow(Configuration, PenumbraService);
         MainWindow = new MainWindow(this);
-        CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService);
-        
+        CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService, PenumbraService);
+
         WindowSystem.AddWindow(ConfigWindow);
         WindowSystem.AddWindow(MainWindow);
         WindowSystem.AddWindow(CreateSnappingWindow);

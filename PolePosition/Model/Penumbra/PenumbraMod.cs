@@ -2,8 +2,6 @@
 
 public sealed class PenumbraMod
 {
-    public string Name { get; set; } = "";
-    public string BasePath { get; set; } = "";
-    public bool Default { get; set; }
-    public bool Enabled { get; set; }
+    public string Name { get; init; } = "";
+    public string BasePath { get; init; } = "";
 }
