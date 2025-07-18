@@ -30,4 +30,13 @@ public class SnappingService(Configuration.Configuration configuration)
         configuration.Snappings.Add(snapping);
         configuration.Save();
     }
+
+    public void DeleteSnapping(Snapping snapping)
+    {
+        PolePosition.Log.Information($"Deleting snapping {snapping.Name}");
+        PolePosition.Log.Verbose($"{snapping.ToJson()}");
+        
+        configuration.Snappings.Remove(snapping);
+        configuration.Save();
+    }
 }

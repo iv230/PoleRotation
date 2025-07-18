@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using PolePosition.Model;
 using PolePosition.Service;
 
 namespace PolePosition.Windows;
@@ -17,7 +19,7 @@ public class MainWindow : Window, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(375, 330),
+            MinimumSize = new Vector2(650, 500),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -94,37 +96,74 @@ public class MainWindow : Window, IDisposable
         var snappings = polePosition.Configuration.Snappings;
         var selected = polePosition.SnappingService.Selected;
 
-        if (ImGui.BeginTable("SnappingTable", 4, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY, new Vector2(0, 200)))
+        if (ImGui.BeginTable("SnappingTable", 6, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.ScrollY | ImGuiTableFlags.Resizable, new Vector2(0, 400)))
         {
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthFixed, 25f);
             ImGui.TableSetupColumn("Name");
             ImGui.TableSetupColumn("Mod");
             ImGui.TableSetupColumn("Object");
             ImGui.TableSetupColumn("Distance");
+            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthFixed, 70f);
             ImGui.TableHeadersRow();
 
             for (var i = 0; i < snappings.Count; i++)
             {
-                var s = snappings[i];
-                if (s == null) continue;
-
-                ImGui.TableNextRow();
-                ImGui.TableSetColumnIndex(0);
-
-                var label = $"##Selectable{i}";
-                var isSelected = (s == selected);
-
-                if (ImGui.Selectable(label, isSelected, ImGuiSelectableFlags.SpanAllColumns))
-                {
-                    polePosition.SnappingService.Select(s);
-                }
-
-                ImGui.SameLine(); ImGui.Text(s.Name);
-                ImGui.TableSetColumnIndex(1); ImGui.Text(s.Mod);
-                ImGui.TableSetColumnIndex(2); ImGui.Text(HousingService.GetObjectName(s.HousingItemId));
-                ImGui.TableSetColumnIndex(3); ImGui.Text($"{s.Distance:F3}");
+                DrawSnappingTableLine(snappings, i, selected);
             }
 
             ImGui.EndTable();
+        }
+    }
+
+    private void DrawSnappingTableLine(List<Snapping?> snappings, int lineNumber, Snapping? selected)
+    {
+        var s = snappings[lineNumber];
+        if (s == null) return;
+
+        var isSelected = s == selected;
+
+        ImGui.TableNextRow();
+
+        ImGui.TableSetColumnIndex(0);
+
+        var checkedState = isSelected;
+        var checkboxId = $"##Checkbox{lineNumber}";
+        if (ImGui.Checkbox(checkboxId, ref checkedState))
+        {
+            polePosition.SnappingService.Select(checkedState ? s : null);
+        }
+
+        ImGui.TableSetColumnIndex(1);
+        ImGui.Text(s.Name);
+
+        ImGui.TableSetColumnIndex(2);
+        ImGui.Text(s.Mod);
+
+        ImGui.TableSetColumnIndex(3);
+        ImGui.Text(HousingService.GetObjectName(s.HousingItemId));
+
+        ImGui.TableSetColumnIndex(4);
+        ImGui.Text($"{s.Distance:F3}");
+
+        ImGui.TableSetColumnIndex(5);
+        var canDelete = ImGui.GetIO().KeyShift;
+
+        if (!canDelete) ImGui.BeginDisabled();
+
+        ImGui.PushFont(UiBuilder.IconFont);
+        if (ImGui.Button($"{FontAwesomeIcon.Trash.ToIconString()}##Delete{lineNumber}"))
+        {
+            polePosition.SnappingService.DeleteSnapping(s);
+        }
+        ImGui.PopFont();
+
+        if (!canDelete) ImGui.EndDisabled();
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.BeginTooltip();
+            ImGui.Text("Hold SHIFT to delete");
+            ImGui.EndTooltip();
         }
     }
 }
