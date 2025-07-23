@@ -5,6 +5,7 @@ namespace PolePosition.Model;
 
 internal sealed unsafe class OverlayDrawContext
 {
+    public float PointCount { get; init; }
     public float Radius { get; init; }
     public Vector3 Center { get; init; }
     public float Distance { get; init; }

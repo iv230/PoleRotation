@@ -7,7 +7,6 @@ namespace PolePosition.Service;
 
 public class WorldOverlayService(PolePosition polePosition, SnappingService snappingService)
 {
-    private const int PointCount = 360;
     private const float PlacementPrecision = 0.005f;
 
     public void Initialize()
@@ -41,6 +40,7 @@ public class WorldOverlayService(PolePosition polePosition, SnappingService snap
 
         return new OverlayDrawContext
         {
+            PointCount = Math.Clamp(360, 1000*snapping.Distance, float.MaxValue),
             Radius = snapping.Distance,
             Center = center,
             Distance = distance,
@@ -66,9 +66,9 @@ public class WorldOverlayService(PolePosition polePosition, SnappingService snap
             );
         }
 
-        for (var i = 0; i < PointCount; i++)
+        for (var i = 0; i < context.PointCount; i++)
         {
-            var angle = MathF.Tau * i / PointCount;
+            var angle = MathF.Tau * i / context.PointCount;
 
             var offsetX = MathF.Cos(angle) * context.Radius;
             var offsetZ = MathF.Sin(angle) * context.Radius;
