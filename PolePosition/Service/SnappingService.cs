@@ -2,7 +2,7 @@
 
 namespace PolePosition.Service;
 
-public class SnappingService(Configuration configuration)
+public class SnappingService(Configuration configuration, PenumbraService penumbraService)
 {
     public Snapping? Selected;
 
@@ -10,6 +10,26 @@ public class SnappingService(Configuration configuration)
     {
         PolePosition.Log.Information($"Selected snapping {snapping?.Name}");
         PolePosition.Log.Verbose($"{snapping?.ToJson()}");
+
+        if (snapping != null)
+        {
+            if (Selected != null)
+            {
+                var oldMod = penumbraService.GetPenumbraMod(Selected.Mod);
+                
+                if (oldMod != null)
+                    penumbraService.SetModState(oldMod, false);
+                else
+                    PolePosition.Log.Warning($"Mod {Selected.Mod} not found, could not disable.");
+            }
+
+            var newMod = penumbraService.GetPenumbraMod(snapping.Mod);
+            
+            if (newMod != null)
+                penumbraService.SetModState(newMod, true);
+            else
+                PolePosition.Log.Warning($"Mod {snapping.Mod} not found, could not enable.");
+        }
 
         Selected = snapping;
     }

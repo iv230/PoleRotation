@@ -32,7 +32,7 @@ public class CreateSnappingWindow : Window, IDisposable
         this.polePosition = polePosition;
         this.snappingService = snappingService;
 
-        _ = Task.Run(async () => modCombo.Items = await penumbraService.LoadPenumbraModsAsync() ?? []);
+        _ = Task.Run(() => modCombo.Items = penumbraService.LoadPenumbraMods() ?? []);
         _ = Task.Run(() => housingCombo.Items = HousingService.GetAllHousingObjects());
     }
 

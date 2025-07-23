@@ -1,0 +1,3 @@
+[submodule "Penumbra.Api"]
+	path = Penumbra.Api
+	url = git@github.com:Ottermandias/Penumbra.Api.git

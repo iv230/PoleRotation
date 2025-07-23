@@ -43,13 +43,13 @@ public sealed class PolePosition : IDalamudPlugin
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         // Services
-        SnappingService = new SnappingService(Configuration);
+        PenumbraService = new PenumbraService(PluginInterface);
+        SnappingService = new SnappingService(Configuration, PenumbraService);
         WorldOverlayService = new WorldOverlayService(this, SnappingService);
-        PenumbraService = new PenumbraService(PluginInterface, Configuration);
         WorldOverlayService.Initialize();
 
         // Windows
-        ConfigWindow = new ConfigWindow(Configuration, PenumbraService);
+        ConfigWindow = new ConfigWindow(Configuration);
         MainWindow = new MainWindow(this);
         CreateSnappingWindow = new CreateSnappingWindow(this, SnappingService, PenumbraService);
 
